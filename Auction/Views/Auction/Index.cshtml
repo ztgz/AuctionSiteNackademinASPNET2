@@ -1,0 +1,12 @@
+﻿@model IList<Models.ViewModels._AuctionRead>
+@{
+    ViewData["Title"] = "AZ-Auktioner";
+}
+
+<h2>Index</h2>
+@foreach (var auction in Model)
+{
+    <a asp-controller="Auction" asp-action="GetAuction" asp-route-auctionId=@auction.AuktionId>@auction.Titel</a>
+    <p>@auction.AuktionId</p>
+    <hr/>
+}

@@ -2,15 +2,15 @@
 
 namespace Models.ViewModels
 {
-    public class LoginVM
+    public class _UserLogin
     {
-        [Required]
-        [UIHint("email")]
+        [Required(ErrorMessage = "Epost är obligatoriskt")]
+        [EmailAddress]
         [Display(Name = "Epost")]
         public string Email { get; set; }
 
-        [Required]
-        [UIHint("password")]
+        [Required(ErrorMessage = "Lösenord är obligatoriskt")]
+        [DataType(DataType.Password)]
         [Display(Name = "Lösenord")]
         public string Password { get; set; }
     }
