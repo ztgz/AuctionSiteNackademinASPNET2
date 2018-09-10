@@ -19,6 +19,7 @@ namespace Repositories
             _baseAddress = new Uri("http://nackowskis.azurewebsites.net");
         }
 
+        #region Create
         public async Task<bool> CreateAuction(Auction dim)
         {
             try
@@ -28,7 +29,7 @@ namespace Repositories
                     client.BaseAddress = _baseAddress;
                     var jsonStr = JsonConvert.SerializeObject(dim);
                     var content = new StringContent(jsonStr, Encoding.UTF8, "application/json");
-                    var result = await client.PostAsync("/api/Auktion/" + Auction.GROUP_CODE, content);
+                    var result  = await client.PostAsync("/api/Auktion/" + Auction.GROUP_CODE, content);
                     return result.IsSuccessStatusCode;
                 }
             }
@@ -37,17 +38,9 @@ namespace Repositories
                 return false;
             }
         }
+        #endregion
 
-        public async Task<bool> DeleteAuction(int auctionId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public async Task<bool> UpdateAuction(Auction dim)
-        {
-            throw new System.NotImplementedException();
-        }
-
+        #region Read
         public async Task<Auction> GetAuction(int auctionId)
         {
             try
@@ -102,5 +95,46 @@ namespace Repositories
                 return null;
             }
         }
+        #endregion
+
+        #region Update
+        public async Task<bool> UpdateAuction(Auction dim)
+        {
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    client.BaseAddress = _baseAddress;
+                    var jsonStr = JsonConvert.SerializeObject(dim);
+                    var content = new StringContent(jsonStr, Encoding.UTF8, "application/json");
+                    var result  = await client.PutAsync($"/api/Auktion/{Auction.GROUP_CODE}" + Auction.GROUP_CODE, content);
+                    return result.IsSuccessStatusCode;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        #endregion
+
+        #region Delete
+        public async Task<bool> DeleteAuction(int auctionId)
+        {
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    client.BaseAddress = _baseAddress;
+                    var result = await client.DeleteAsync($"/api/Auktion/{Auction.GROUP_CODE}/{auctionId}");
+                    return result.IsSuccessStatusCode;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        #endregion
     }
 }

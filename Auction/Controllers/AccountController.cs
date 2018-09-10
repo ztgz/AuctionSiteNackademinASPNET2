@@ -10,12 +10,9 @@ using Models.ViewModels;
 
 namespace Auction.Controllers
 {
-    [Authorize]
+    [AllowAnonymous]
     public class AccountController : Controller
     {
-        private const string ROLE_ADMIN = "Admin";
-        private const string ROLE_REGULAR  = "Regular";
-
         private readonly SignInManager<AppUser> _signInManager;
         private readonly UserManager<AppUser> _userManager;
 
@@ -26,7 +23,6 @@ namespace Auction.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
         public IActionResult Login()
         {
             if (_signInManager.IsSignedIn(User))
@@ -39,7 +35,6 @@ namespace Auction.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [AllowAnonymous]
         public async Task<IActionResult> Login(_UserLogin uim)
         {
             if (ModelState.IsValid)
@@ -55,17 +50,15 @@ namespace Auction.Controllers
             return View(uim);
         }
 
-        [AllowAnonymous]
+        [HttpGet]
         public IActionResult LoginFacebook()
         {
-            //var abc = Challenge(new AuthenticationProperties { RedirectUri = "/" }, "Facebook");
             var redirectUrl = Url.Action("FacebookLoginCallback", "Account");
             var properties =_signInManager.ConfigureExternalAuthenticationProperties(FacebookDefaults.AuthenticationScheme, redirectUrl);
             return Challenge(properties, FacebookDefaults.AuthenticationScheme);
         }
 
         [HttpGet]
-        [AllowAnonymous]
         public async Task<IActionResult> FacebookLoginCallback()
         {
             var info = await _signInManager.GetExternalLoginInfoAsync();
@@ -76,36 +69,39 @@ namespace Auction.Controllers
 
             //Try to sign in user
             var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, false, true);
-            //If the user has an account
+            //If successful user allready has an account...
             if (result.Succeeded)
             {
+                //...go to index
                 return RedirectToAction("Index", "Auction");
             }
-            //Otherwise...
+            //otherwise...
             else
             {
                 //...create an account
                 var email = info.Principal.FindFirstValue(ClaimTypes.Email);
                 AppUser user = new AppUser{ UserName = email, Email = email };
-
                 var identityResult = await _userManager.CreateAsync(user);
+
                 if (identityResult.Succeeded)
                 {
+                    //...add provider login to db
                     identityResult = await _userManager.AddLoginAsync(user, info);
                     if (identityResult.Succeeded)
                     {
-                        await _userManager.AddToRoleAsync(user, ROLE_REGULAR);
+                        await _userManager.AddToRoleAsync(user, AppUser.ROLE_REGULAR);
                         await _signInManager.SignInAsync(user, false);
                         return RedirectToAction("Index", "Auction");
                     }
                 }
+                //If the result failed in some step, add the error
+                AddErrors(identityResult);
             }
 
             return RedirectToAction("Login", "Account");
         }
 
         [HttpPost]
-        [AllowAnonymous]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
@@ -120,7 +116,6 @@ namespace Auction.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(_UserRegister uim)
         {
@@ -130,7 +125,7 @@ namespace Auction.Controllers
                 var result = await _userManager.CreateAsync(user, uim.Password);
                 if (result.Succeeded)
                 {
-                    await _userManager.AddToRoleAsync(user, ROLE_REGULAR);
+                    await _userManager.AddToRoleAsync(user, AppUser.ROLE_REGULAR);
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return RedirectToAction("Index", "Auction");
                 }
@@ -139,7 +134,7 @@ namespace Auction.Controllers
 
             return View(uim);
         }
-
+        
         private void AddErrors(IdentityResult result)
         {
             foreach (var error in result.Errors)

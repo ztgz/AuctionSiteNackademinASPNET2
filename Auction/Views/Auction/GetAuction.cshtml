@@ -1,8 +1,82 @@
-﻿@model Models.ViewModels._AuctionRead
+﻿@using Microsoft.AspNetCore.Identity
+@using Models.IdentityModels
+@using Models.ViewModels
+@inject SignInManager<AppUser> SignInManager
+@model _AuctionRead
 
 @{
     ViewData["Title"] = "Auktion";
 }
 
 <p>@Model.Titel</p>
+
+<div class="row">
+    <div class="col-12">
+        <form method="post" asp-controller="Auction" asp-action="UpdateAuction" id="editForm" style="display: none">
+            <!-- Transform the auction read data to manage data -->
+            @{ Html.RenderPartial("_AuctionFormContent", _AuctionManage.Transform(Model));}
+            <button type="submit" class="btn btn-dark">Uppdatera auktion</button>
+        </form>
+    </div>
+</div>
+
+@if (User.IsInRole(AppUser.ROLE_ADMIN))
+{
+    <button type="button" class="btn btn-dark" data-toggle="modal" data-target="#deleteModal">Ta bort</button>
+}
+@if (Model.IsOwner)
+{
+    <button class="btn btn-dark" id="editBtn">Uppdatera</button>
+}
+@if (DateTime.Now < Model.SlutDatum)
+{
+    if (SignInManager.IsSignedIn(User))
+    {
+        <div id="createBid">
+            @{ Html.RenderPartial("~/Views/Bid/_CreateBid.cshtml", new _BidManage { AuktionID = Model.AuktionId, Summa = 1 }); }
+        </div>
+    }
+}
+else
+{
+    <p>Info om vinnande bud</p>
+}
+
+<!-- Confirm delete of modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="Delete Auction" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Ta bort auktion @Model.AuktionId</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Vill du bort auktion @Model.AuktionId - @Model.Titel?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Avbryt</button>
+                <form method="post" asp-controller="Auction" asp-action="DeleteAuction" asp-route-auctionId="@Model.AuktionId">
+                    <button type="submit" class="btn btn-primary" id="deleteBtn">Ta bort auktion</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#editBtn").click(() => {
+            $("#editForm").toggle();
+            const btnText = $("#editBtn").text() === 'Uppdatera' ? 'Stäng' : 'Uppdatera';
+            $("#editBtn").text(btnText);
+        });
+
+        $('#myModal').on('shown.bs.modal', function () {
+            $('#myInput').trigger('focus');
+        });
+
+    });
+</script>
 

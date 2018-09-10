@@ -1,4 +1,4 @@
-﻿@model Models.ViewModels._AuctionCreate
+﻿@model _AuctionManage
 
 @{
     ViewData["Title"] = "Skapa Auction";
@@ -8,32 +8,7 @@
     <div class="col-12">
         <h1>Ny auktion</h1>
         <form asp-controller="Auction" asp-action="CreateAuction" method="post">
-            <div asp-validation-summary="All"></div>
-            <div class="form-group">
-                <label asp-for="Titel"></label>
-                <input asp-for="Titel" class="form-control"/>
-                <span asp-validation-for="Titel" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Beskrivning"></label>
-                <input asp-for="Beskrivning" class="form-control"/>
-                <span asp-validation-for="Beskrivning" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="StartDatum"></label>
-                <input asp-for="StartDatum"class="form-control"/>
-                <span asp-validation-for="StartDatum" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SlutDatum"></label>
-                <input asp-for="SlutDatum" class="form-control"/>
-                <span asp-validation-for="SlutDatum" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Utropspris"></label>
-                <input asp-for="Utropspris" class="form-control"/>
-                <span asp-validation-for="Utropspris" class="text-danger"></span>
-            </div>
+            @{ Html.RenderPartial("_AuctionFormContent", Model);}
             <button type="submit" class="btn btn-dark ">Skapa auktion</button>
         </form>
     </div>

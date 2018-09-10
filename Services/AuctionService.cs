@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Models.DataModels;
@@ -21,59 +22,147 @@ namespace Services
             _mapper = mapper;
         }
 
-        public async Task<bool> CreateAuction(_AuctionCreate uim, string userId)
+        #region Create
+        public async Task<bool> CreateAuction(_AuctionManage uim, string userId)
         {
+            bool success;
+
             try
             {
                 Auction dim  = _mapper.Map<Auction>(uim);
                 dim.SkapadAv = userId;
 
-                var success  = await _auctionRepo.CreateAuction(dim);
-                return success;
+                success  = await _auctionRepo.CreateAuction(dim);
             }
             catch
             {
-                return false;
+                success = false;
             }
 
+            return success;
         }
+        #endregion
 
-        public async Task<bool> DeleteAuction(int AuctionId)
+        #region Read
+        public async Task<_AuctionRead> GetAuction(int auctionId, string userId)
         {
-            throw new NotImplementedException();
-        }
-
-        public async Task<bool> UpdateAuction(_AuctionUpdate uim)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<_AuctionRead> GetAuction(int auctionId)
-        {
+            _AuctionRead result;
             try
             {
                 var auction = await _auctionRepo.GetAuction(auctionId);
-                var result = _mapper.Map<_AuctionRead>(auction);
-                return result;
+                result = _mapper.Map<_AuctionRead>(auction);
+                result.IsOwner = auction.SkapadAv == userId;
             }
             catch
             {
-                return null;
+                result = null;
             }
+
+            return result;
         }
 
-        public async Task<IList<_AuctionRead>> GetAuctions()
+        public async Task<IList<_AuctionRead>> GetAuctions(bool orderByStartingPrice)
         {
+            IList<_AuctionRead> results;
             try
             {
                 var auctions = await _auctionRepo.GetAuctions();
-                var results = _mapper.Map<IList<_AuctionRead>>(auctions);
-                return results;
+                results = _mapper.Map<IList<_AuctionRead>>(auctions);
+
+                if (orderByStartingPrice)
+                {
+                    results =  results.OrderBy(r => r.Utropspris).ToList();
+                }
+                else
+                {
+                    results = results.OrderBy(a => a.SlutDatum).ToList();
+                }
             }
             catch
             {
-                return null;
+                results = null;
             }
+
+            return results;
         }
+
+        public async Task<IList<_AuctionRead>> GetAuctions(string searchTerm, bool orderByStartingPrice)
+        {
+            IList<_AuctionRead> results;
+            try
+            {
+                searchTerm = searchTerm.ToLower();
+                //Filter auctions on titel and beskrivning
+                var auctions = (await _auctionRepo.GetAuctions()).
+                    Where(a => a.Titel.ToLower().Contains(searchTerm) || a.Beskrivning.ToLower().Contains(searchTerm));
+                results = _mapper.Map<IList<_AuctionRead>>(auctions);
+
+                if (orderByStartingPrice)
+                {
+                    results = results.OrderBy(a => a.Utropspris).ToList();
+                }
+                else
+                {
+                    results = results.OrderBy(a => a.SlutDatum).ToList();
+                }
+            }
+            catch
+            {
+                results = null;
+            }
+
+            return results;
+        }
+
+        #endregion
+
+        #region Update
+        public async Task<bool> UpdateAuction(_AuctionManage uim, string userId)
+        {
+            bool success;
+            try
+            {
+                string createdBy = (await _auctionRepo.GetAuction(uim.AuktionId)).SkapadAv;
+                //Only the user who created the auction can update it
+                if (createdBy == userId)
+                {
+                    Auction dim = _mapper.Map<Auction>(uim);
+                    dim.SkapadAv = userId;
+                    success = await _auctionRepo.UpdateAuction(dim);
+                }
+                else
+                {
+                    success = false;
+                }
+            }
+            catch
+            {
+                success = false;
+            }
+
+            return success;
+        }
+        #endregion
+
+        #region Delete
+        public async Task<bool> DeleteAuction(int auctionId)
+        {
+            bool success;
+            try
+            {
+                //TODO KOLLA SÅ AUKTION INTE HAR NÅGRA BUD
+
+                success = await _auctionRepo.DeleteAuction(auctionId);
+            }
+            catch
+            {
+                success = false;
+            }
+
+            return success;
+        }
+        #endregion
+
+
     }
 }

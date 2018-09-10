@@ -10,8 +10,9 @@ namespace Auction.Tools.AutoMapper
         public DomainProfile ()
         {
             CreateMap<Models.DataModels.Auction, _AuctionRead>();
-            CreateMap<_AuctionCreate, Models.DataModels.Auction>()
+            CreateMap<_AuctionManage, Models.DataModels.Auction>()
                 .ForMember(dto => dto.Gruppkod, opt => opt.UseValue(Models.DataModels.Auction.GROUP_CODE));
+            CreateMap<_BidManage, Models.DataModels.Bid>();
         }
     }
 }

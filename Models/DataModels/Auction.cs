@@ -4,9 +4,10 @@ namespace Models.DataModels
 {
     public class Auction
     {
-        public const int GROUP_CODE = 1360;
+        public const int GROUP_CODE   = 1360;
+        public const int AUCTION_NONE = 0;
 
-        public int      AuktionId  { get; set; }
+        public int      AuktionId   { get; set; }
         public string   Titel       { get; set; }
         public string   Beskrivning { get; set; }
         public DateTime StartDatum  { get; set; }
