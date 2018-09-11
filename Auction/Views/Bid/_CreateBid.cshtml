@@ -1,6 +1,6 @@
 ﻿@model _BidManage
 
-<form method="post" asp-controller="Bid" asp-action="CreateBid">
+<form method="post" asp-controller="Bid" asp-action="CreateBid" id="bidForm">
     <div asp-validation-summary="All" class="text-danger"></div>
     <input hidden asp-for="AuktionID"/>
     <div class="form-group">
@@ -8,29 +8,4 @@
         <input asp-for="Summa" class="form-control"/>
         <span asp-validation-for="Summa"></span>
     </div>
-    <button type="button" class="btn btn-dark" id="createBidBtn">Ge ett bud</button>
 </form>
-
-<script>
-    $(document).ready(function () {
-        console.log('reload');
-
-        $('#createBidBtn').click(function(event) {
-            const sum = $('#Summa').val();
-            const id  = $('#AuktionID').val();
-            var bidObj = { AuktionID: id, Summa: sum };
-            $.ajax({
-                url: '/Bid/CreateBid',
-                type: 'Post',
-                data: { uim: bidObj },
-                success: result => {
-                    $("#createBid").html(result);
-                },
-                error: result => {
-                    console.log('Request failed', result);
-                }
-            });
-        });
-
-    });
-</script>

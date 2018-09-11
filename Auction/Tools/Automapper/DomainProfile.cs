@@ -1,4 +1,5 @@
 ﻿using Models.ViewModels;
+using Models.DataModels;
 using AutoMapper;
 
 namespace Auction.Tools.AutoMapper
@@ -12,7 +13,8 @@ namespace Auction.Tools.AutoMapper
             CreateMap<Models.DataModels.Auction, _AuctionRead>();
             CreateMap<_AuctionManage, Models.DataModels.Auction>()
                 .ForMember(dto => dto.Gruppkod, opt => opt.UseValue(Models.DataModels.Auction.GROUP_CODE));
-            CreateMap<_BidManage, Models.DataModels.Bid>();
+            CreateMap<_BidManage, Bid>();
+            CreateMap<Bid, _BidRead>();
         }
     }
 }

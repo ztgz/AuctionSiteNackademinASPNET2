@@ -1,7 +1,5 @@
 ﻿using Auction.Identity;
 using AutoMapper;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Facebook;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -9,7 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Models.DataModels;
 using Models.IdentityModels;
+using Repositories;
+using Repositories.Interfaces;
 using Services;
 using Services.Interfaces;
 
@@ -61,6 +62,9 @@ namespace Auction
 
             //One new instance per request
             services.AddScoped<IAuctionService, AuctionService>();
+            services.AddScoped<IBidService, BidService>();
+            services.AddScoped<IAuctionRepo, AuctionRepo>();
+            services.AddScoped<IBidRepo, BidRepo>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }

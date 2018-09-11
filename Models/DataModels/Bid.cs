@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Models.DataModels
+﻿namespace Models.DataModels
 {
     public class Bid
     {

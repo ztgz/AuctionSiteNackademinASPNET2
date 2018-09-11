@@ -1,6 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using Models.IdentityModels
-@using Models.ViewModels
 @inject SignInManager<AppUser> SignInManager
 @model _AuctionRead
 
@@ -30,11 +29,12 @@
 }
 @if (DateTime.Now < Model.SlutDatum)
 {
+    <div id="bidList"></div>
     if (SignInManager.IsSignedIn(User))
     {
-        <div id="createBid">
-            @{ Html.RenderPartial("~/Views/Bid/_CreateBid.cshtml", new _BidManage { AuktionID = Model.AuktionId, Summa = 1 }); }
-        </div>
+        <div id ="errorBid"></div>
+        <div id="createBid"></div>
+        <button type="button" class="btn btn-dark" id="createBidBtn">Ge ett bud</button>
     }
 }
 else
@@ -66,7 +66,64 @@ else
 </div>
 
 <script>
+    /*    AJAX-requests     */
+    const getBids = () => {
+        const id = @Model.AuktionId
+        $.ajax({
+            url: '/Bid/GetBids',
+            type: 'Get',
+            data: { id: id },
+            success: result => {
+                $("#bidList").html(result);
+            },
+            error: result => {
+                alert('Kunde inte ladda budlista');
+            }
+        });
+    };
+
+    const getBidForm = () => {
+        const id = @Model.AuktionId
+        $.ajax({
+            url: '/Bid/CreateBid',
+            type: 'Get',
+            data: { id: id },
+            success: result => {
+                $("#createBid").html(result);
+            },
+            error: result => {
+                alert('Kunde inte ladda bud-formulär');
+            }
+        });
+    };
+
+    const createBid = (token, bidObj) => {
+        $.ajax({
+            url: '/Bid/CreateBid',
+            type: 'Post',
+            data: { __RequestVerificationToken: token, uim: bidObj },
+            success: result => {
+                //Reload list of bids
+                getBids();
+            },
+            error: result => {
+                const alertHtml = createAlert(result.responseText);
+                $('#errorBid').html(alertHtml);
+            }
+        });
+    }
+
+    /* Other functions */
+    const createAlert = text =>  `
+        <div class="alert alert-danger" role="alert">
+            ${text}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>`;
+
     $(document).ready(function () {
+
         $("#editBtn").click(() => {
             $("#editForm").toggle();
             const btnText = $("#editBtn").text() === 'Uppdatera' ? 'Stäng' : 'Uppdatera';
@@ -77,6 +134,22 @@ else
             $('#myInput').trigger('focus');
         });
 
+        //Try to create a bid
+        $('#createBidBtn').click(function () {
+            //Get the form verification token
+            const id = $('#AuktionID').val();
+            const form = $('#bidForm');
+            const token = $('input[name="__RequestVerificationToken"]', form).val();
+            //Create the bid object
+            const sum = $('#Summa').val();
+            var bidObj = { AuktionID: id, Summa: sum };
+            //Try to create bid
+            createBid(token, bidObj);
+        });
+
+        //Fetch data when the document has loaded
+        getBids();
+        getBidForm();
     });
 </script>
 

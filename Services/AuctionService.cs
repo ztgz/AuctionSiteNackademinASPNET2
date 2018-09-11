@@ -14,12 +14,14 @@ namespace Services
     public class AuctionService : IAuctionService
     {
         private readonly IAuctionRepo _auctionRepo;
+        private readonly IBidRepo     _bidRepo;
         private readonly IMapper _mapper;
 
-        public AuctionService(IMapper mapper)
+        public AuctionService(IMapper mapper, IAuctionRepo auctionRepo, IBidRepo bidRepo)
         {
-            _auctionRepo = new AuctionRepo();
-            _mapper = mapper;
+            _mapper      = mapper;
+            _auctionRepo = auctionRepo;
+            _bidRepo     = bidRepo;
         }
 
         #region Create
@@ -150,9 +152,16 @@ namespace Services
             bool success;
             try
             {
-                //TODO KOLLA SÅ AUKTION INTE HAR NÅGRA BUD
-
-                success = await _auctionRepo.DeleteAuction(auctionId);
+                var bids = await _bidRepo.GetBids(auctionId);
+                //Cannot remove auction if it still has bids
+                if (bids.Count > 0)
+                {
+                    success = false;
+                }
+                else
+                {
+                    success = await _auctionRepo.DeleteAuction(auctionId);
+                }
             }
             catch
             {
