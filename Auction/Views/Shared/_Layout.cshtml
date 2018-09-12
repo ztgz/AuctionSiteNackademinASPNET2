@@ -12,10 +12,11 @@
 </head>
 
 <body>
+    <!-- The scripts is on top of the body, for some reason the partial views wont load the libarys if the are in the bottom-->
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-    
+
     <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.17.0/jquery.validate.min.js"></script>
     <script src="https://ajax.aspnetcdn.com/ajax/jquery.validation.unobtrusive/3.2.6/jquery.validate.unobtrusive.min.js"></script>
     <script src="https://cdn.jsdelivr.net/jquery.ajax.unobtrusive/3.2.4/jquery.unobtrusive-ajax.min.js"></script>
@@ -38,6 +39,9 @@
                         </li>
                         <li class="nav-item">
                             <a asp-controller="Admin" asp-action="Index" class="nav-link">Admin</a>
+                        </li>
+                        <li>
+                            <a asp-controller="Statistics" asp-action="Index" class="nav-link">Statistik</a>
                         </li>
                     }
                 </ul>
@@ -67,8 +71,8 @@
     <div class="container mt-5">
         @RenderBody()
     </div>
-    
-    
+
+
     <!-- Info Modal -->
     <div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -88,7 +92,7 @@
             </div>
         </div>
     </div>
-    
+
     <script>
         //Open the modal with the specifed text
         const showModal = (title, body) => {

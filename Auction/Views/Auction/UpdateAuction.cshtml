@@ -1,0 +1,13 @@
+﻿@model _AuctionManage
+
+@{
+    ViewData["Title"] = "Uppdatera auktiuon";
+}
+
+<form method="post" asp-controller="Auction" asp-action="UpdateAuction">
+    <!-- Transform the auction read data to manage data -->
+    @{ Html.RenderPartial("_AuctionFormContent", Model);}
+    <button type="submit" class="btn btn-dark">Uppdatera auktion</button>
+    <a asp-controller="Auction" asp-action="GetAuction" asp-route-auctionId=@Model.AuktionId class="btn btn-dark">Tillbaka</a>
+</form>
+

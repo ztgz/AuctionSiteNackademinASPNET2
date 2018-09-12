@@ -12,6 +12,6 @@ namespace Services.Interfaces
         Task<_AuctionRead>        GetAuction(int auctionId, string userId);
         Task<IList<_AuctionRead>> GetAuctions(bool orderByStartingPrice);
         Task<IList<_AuctionRead>> GetAuctions(string searchTerm, bool orderByStartingPrice);
-
+        Task<IList<_AuctionRead>> GetAuctions(int year, int month, string userId);
     }
 }

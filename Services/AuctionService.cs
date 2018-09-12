@@ -116,6 +116,30 @@ namespace Services
             return results;
         }
 
+        public async Task<IList<_AuctionRead>> GetAuctions(int year, int month, string userId)
+        {
+            IList<_AuctionRead> results;
+            try
+            {
+                //Filter the auctions
+                var auctions = (await _auctionRepo.GetAuctions())
+                    .Where(a => a.SlutDatum.Year == year && a.SlutDatum.Month == month);
+                if (!string.IsNullOrEmpty(userId))
+                {
+                    auctions = auctions.Where(a => a.SkapadAv == userId);
+                }
+
+                results = _mapper.Map<IList<_AuctionRead>>(auctions);
+               
+            }
+            catch
+            {
+                results = null;
+            }
+
+            return results;
+        }
+
         #endregion
 
         #region Update

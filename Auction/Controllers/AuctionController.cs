@@ -112,22 +112,49 @@ namespace Auction.Controllers
         #endregion
 
         #region Update
+
+        [HttpGet]
+        [Authorize(Roles = AppUser.ROLE_ADMIN)]
+        public async Task<IActionResult> UpdateAuction(int id)
+        {
+            try
+            {
+                //Get the auction as read...
+                var userId = _userManager.GetUserId(User);
+                var auctionRead = await _auctionService.GetAuction(id, userId);
+                if (auctionRead == null)
+                {
+                    SetAndOpenModal("Kunde inte hitta auktion", "Fel");
+                    return RedirectToAction("Index");
+                }
+
+                //...and return it as a manage
+                var model = _AuctionManage.Transform(auctionRead);
+                return View(model);
+            }
+            catch
+            {
+                SetAndOpenModal("Ett internt fel uppstog", "Fel");
+                return RedirectToAction("Index");
+            }
+
+
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = AppUser.ROLE_ADMIN)]
         public async Task<IActionResult> UpdateAuction(_AuctionManage uim)
         {
-            string errorMessage = "";
-
             //Validates that the model is correctly specified
             IList<string> errors = uim.Validate();
             //If there are errors...
             if (errors.Count > 0)
             {
-                //Append them to the error string
+                //...add each error to state
                 foreach (var error in errors)
                 {
                     ModelState.AddModelError(String.Empty, error);
-                    errorMessage += $"{error}. ";
                 }
             }
             else if (ModelState.IsValid)
@@ -139,13 +166,10 @@ namespace Auction.Controllers
                     return RedirectToAction("GetAuction", "Auction", new { auctionId = uim.AuktionId });
                 }
 
-                errorMessage += "Kunde inte uppdatera auktion " + uim.AuktionId;
+                ModelState.AddModelError(string.Empty, "Kunde inte uppdatera auktion " + uim.AuktionId);
             }
 
-            //Show the errors in a modal
-            SetAndOpenModal(errorMessage, "Uppdatering misslyckades");
-
-            return RedirectToAction("GetAuction", "Auction", new { auctionId = uim.AuktionId });
+            return View(uim);
         }
         #endregion
 
@@ -158,7 +182,7 @@ namespace Auction.Controllers
             bool success = await _auctionService.DeleteAuction(auctionId);
             if (success)
             {
-                SetAndOpenModal($"Auktion ${auctionId} bortagen", "Auktion bortagen");
+                SetAndOpenModal($"Auktion {auctionId} bortagen", "Auktion bortagen");
                 return RedirectToAction("Index", "Auction");
             }
 
@@ -167,7 +191,7 @@ namespace Auction.Controllers
         }
         #endregion
 
-        public void SetAndOpenModal(string body, string title)
+        private void SetAndOpenModal(string body, string title)
         {
             TempData["InfoMessage"] = body;
             TempData["InfoTitle"]   = title;

@@ -65,6 +65,7 @@ namespace Auction
             services.AddScoped<IBidService, BidService>();
             services.AddScoped<IAuctionRepo, AuctionRepo>();
             services.AddScoped<IBidRepo, BidRepo>();
+            services.AddScoped<IStatisticService, StatisticsService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
