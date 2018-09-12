@@ -34,7 +34,7 @@ namespace Services
                 endDate = endDate.AddMonths(1);
                 
                 //Dictonaries with all the sums
-                IDictionary<string, (int startingBidsSum, int maxBidsSum)> dateDictionary = new Dictionary<string, (int,int)>();
+                SortedDictionary<string, (int startingBidsSum, int maxBidsSum)> dateDictionary = new SortedDictionary<string, (int startingBidsSum, int maxBidsSum)>();
                 //Create zero keys for all the months between two periods
                 for (DateTime date = startDate.Date; date < endDate; date = date.AddMonths(1))
                 {
