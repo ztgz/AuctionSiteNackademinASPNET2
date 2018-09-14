@@ -5,23 +5,30 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Models.IdentityModels;
+using Services.Interfaces;
 
 namespace Auction.Controllers
 {
     [Authorize]
     public class AdminController : Controller
     {
-        private readonly UserManager<AppUser> _userManager;
-        public AdminController (UserManager<AppUser> userManager)
+        private readonly IAccountService _accountService;
+        public AdminController (IAccountService accountService)
         {
-            _userManager = userManager;
+            _accountService = accountService;
         }
 
         public async Task<IActionResult> Index()
         {
-            var a = (await _userManager.GetUsersInRoleAsync(AppUser.ROLE_ADMIN)).ToList();
-            var b = (await _userManager.GetUsersInRoleAsync(AppUser.ROLE_REGULAR)).ToList();
-            return View();
+            var model = await _accountService.GetUsersRoles();
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> ChangeRole(string userEmail, string role)
+        {
+            var result = await _accountService.SetUserToRole(userEmail, role);
+            return new JsonResult(result);
         }
     }
 }

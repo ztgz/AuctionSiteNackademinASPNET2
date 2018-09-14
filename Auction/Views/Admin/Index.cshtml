@@ -1,7 +1,104 @@
-﻿
+﻿@using Models.IdentityModels
+@model _UsersRolesManage
+
 @{
     ViewData["Title"] = "Kontrollpanel";
 }
 
 <h2>Admin</h2>
- 
+@if (Model.AdminUsers != null)
+{
+    <select id="adminUsers">
+        @foreach (var user in Model.AdminUsers)
+        {
+            <option value=@user.Email>@user.Email</option>
+        }
+
+    </select>
+    <button class="btn btn-dark" id="toRegularBtn">Till vanlig</button>
+}
+else
+{
+    <p>Fel när admin users skulle laddas</p>
+}
+@if (Model.RegularUsers != null)
+{
+    <select id="regularUsers">
+        @foreach (var user in Model.RegularUsers)
+        {
+            <option value=@user.Email>@user.Email</option>
+        }
+    </select>
+    <button class="btn btn-dark" id="toAdminBtn">Till admin</button>
+}
+else
+{
+    <p>Fel när regular users skulle laddas</p>
+}
+<div id="infoBox"></div>
+
+<script>
+    const showAlert = (text, success) => {
+        const alertHtml = `
+        <div class='alert alert-${success ? "success" : "danger"}' role="alert">
+            ${text}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>`;
+        $('#infoBox').html(alertHtml);
+    };
+    
+    $(document).ready(() => {
+
+        $("#toAdminBtn").click(() => {
+            const email = $("#regularUsers").val();
+
+            $.ajax({
+                url: '/Admin/ChangeRole',
+                type: 'Post',
+                data: { userEmail: email, role: '@AppUser.ROLE_ADMIN' },
+                success: result => {
+                    //If the user was successfully made admin...
+                    if (result) {
+                        //... move user to admin select list
+                        const adminUser = $('#adminUsers');
+                        adminUser.append($("<option></option>").attr("value", email).text(email)).att;
+                        adminUser.val(email);
+                        //...and remove from user list
+                        $(`#regularUsers option[value='${email}']`).remove();
+                        //Create alert
+                        showAlert(`${email} blev "${'@AppUser.ROLE_ADMIN'}"`, true);
+                    } else {
+                        showAlert(`${email} kunde inte flyttas`, false);
+                    }
+                }
+            });
+        });
+
+        $("#toRegularBtn").click(() => {
+            const email = $("#adminUsers").val();
+            $.ajax({
+                url: '/Admin/ChangeRole',
+                type: 'Post',
+                data: { userEmail: email, role: '@AppUser.ROLE_REGULAR' },
+                success: result => {
+                    //If the user was successfully made admin...
+                    if (result) {
+                        //... move user to admin select list
+                        const regularUser = $('#regularUsers');
+                        regularUser.append($("<option></option>").attr("value", email).text(email));
+                        regularUser.val(email);
+                        //...and remove from user list
+                        $(`#adminUsers option[value='${email}']`).remove();
+                        //Create alert
+                        showAlert(`${email} blev "${'@AppUser.ROLE_REGULAR'}"`, true);
+                    } else {
+                        showAlert(`${email} kunde inte flyttas`, false);
+                    }
+                }
+            });
+        });
+
+    });
+</script>

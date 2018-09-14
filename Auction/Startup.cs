@@ -44,28 +44,21 @@ namespace Auction
                 .AddEntityFrameworkStores<AppIdentityDbContext>()
                 .AddDefaultTokenProviders();
 
-            services.AddAuthentication( 
-                //    options =>
-                //{
-                //    options.DefaultChallengeScheme = FacebookDefaults.AuthenticationScheme;
-                //    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                //    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                //}
-                    ).AddFacebook(options =>
+            services.AddAuthentication().AddFacebook(options =>
             {
                 options.AppId     = Configuration["Authentication:Facebook:AppId"];
                 options.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
-            })
-                /*.AddCookie()*/;
+            });
 
             services.AddAutoMapper();
 
             //One new instance per request
-            services.AddScoped<IAuctionService, AuctionService>();
-            services.AddScoped<IBidService, BidService>();
-            services.AddScoped<IAuctionRepo, AuctionRepo>();
-            services.AddScoped<IBidRepo, BidRepo>();
+            services.AddScoped<IAuctionService  , AuctionService>();
+            services.AddScoped<IBidService      , BidService>();
+            services.AddScoped<IAuctionRepo     , AuctionRepo>();
+            services.AddScoped<IBidRepo         , BidRepo>();
             services.AddScoped<IStatisticService, StatisticsService>();
+            services.AddScoped<IAccountService  , AccountService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
