@@ -1,0 +1,47 @@
+﻿body {
+    background-color: #eceadc;
+    font-family: 'Open Sans Condensed', sans-serif;
+}
+
+h1, h2 {
+    font-family: 'Amatic SC', cursive;
+}
+
+body P {
+    font-size: 1.2rem;
+}
+
+/* Font settings */
+.text-green {
+    color: #006400;
+}
+
+.text-white {
+    color: white;
+}
+
+.text-amatic-sc {
+    font-family: 'Amatic SC', cursive;
+}
+
+.strong {
+    font-weight: bold;
+}
+
+/* Div */
+.scrollable {
+    height:150px;
+    overflow-y: scroll;
+}
+
+
+/* Navbar area*/
+.logo {
+    height: 30px;
+    width: auto;
+}
+
+.navbar-text {
+    font-family: 'Open Sans Condensed', sans-serif;
+    font-size: 1rem;
+}

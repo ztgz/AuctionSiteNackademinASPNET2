@@ -16,10 +16,10 @@ namespace Auction.Controllers
         private readonly SignInManager<AppUser> _signInManager;
         private readonly UserManager<AppUser> _userManager;
 
-        public AccountController (SignInManager<AppUser> signInManager, UserManager<AppUser> userManager)
+        public AccountController(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager)
         {
             _signInManager = signInManager;
-            _userManager   = userManager;
+            _userManager = userManager;
         }
 
         [HttpGet]
@@ -54,7 +54,7 @@ namespace Auction.Controllers
         public IActionResult LoginFacebook()
         {
             var redirectUrl = Url.Action("FacebookLoginCallback", "Account");
-            var properties =_signInManager.ConfigureExternalAuthenticationProperties(FacebookDefaults.AuthenticationScheme, redirectUrl);
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties(FacebookDefaults.AuthenticationScheme, redirectUrl);
             return Challenge(properties, FacebookDefaults.AuthenticationScheme);
         }
 
@@ -75,28 +75,25 @@ namespace Auction.Controllers
                 //...go to index
                 return RedirectToAction("Index", "Auction");
             }
-            //otherwise...
-            else
-            {
-                //...create an account
-                var email = info.Principal.FindFirstValue(ClaimTypes.Email);
-                AppUser user = new AppUser{ UserName = email, Email = email };
-                var identityResult = await _userManager.CreateAsync(user);
 
+            //... otherwise create an account
+            var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+            AppUser user = new AppUser { UserName = email, Email = email };
+            var identityResult = await _userManager.CreateAsync(user);
+
+            if (identityResult.Succeeded)
+            {
+                //...add provider login to db
+                identityResult = await _userManager.AddLoginAsync(user, info);
                 if (identityResult.Succeeded)
                 {
-                    //...add provider login to db
-                    identityResult = await _userManager.AddLoginAsync(user, info);
-                    if (identityResult.Succeeded)
-                    {
-                        await _userManager.AddToRoleAsync(user, AppUser.ROLE_REGULAR);
-                        await _signInManager.SignInAsync(user, false);
-                        return RedirectToAction("Index", "Auction");
-                    }
+                    await _userManager.AddToRoleAsync(user, AppUser.ROLE_REGULAR);
+                    await _signInManager.SignInAsync(user, false);
+                    return RedirectToAction("Index", "Auction");
                 }
-                //If the result failed in some step, add the error
-                AddErrors(identityResult);
             }
+            //If the result failed in some step, add the error
+            AddErrors(identityResult);
 
             return RedirectToAction("Login", "Account");
         }
@@ -134,7 +131,7 @@ namespace Auction.Controllers
 
             return View(uim);
         }
-        
+
         private void AddErrors(IdentityResult result)
         {
             foreach (var error in result.Errors)

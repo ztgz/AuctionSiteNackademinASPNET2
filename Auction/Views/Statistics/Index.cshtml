@@ -1,5 +1,6 @@
 ﻿@{
     ViewData["Title"] = "Statistik";
+    DateTime startOfYear = new DateTime(DateTime.Now.Year, 4, 1);
 }
 
 <h2>Statistik</h2>
@@ -7,7 +8,8 @@
     <option value=@true>Alla auktioner</option>
     <option value=@false>Mina auktioner</option>
 </select>
-<input type="month" value="2018-01" id="startDate" />
+
+<input type="month" value=@startOfYear.ToString("yyyy-MM") id="startDate" />
 <input type="month" value=@DateTime.Now.ToString("yyyy-MM") id="endDate" />
 <button class="btn btn-dark" id="searchChartBtn">Visa</button>
 <br />

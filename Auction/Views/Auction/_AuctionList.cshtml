@@ -1,24 +1,48 @@
-﻿
-@foreach (var auction in Model)
-{
-    <a asp-controller="Auction" asp-action="GetAuction" asp-route-auctionId=@auction.AuktionId>@auction.Titel</a>
-    <p>
-        Status:
-        @if (DateTime.Now < auction.StartDatum)
-        {
-            <span>Auktionen har ännu inte startat</span>
-        }
-        else if (DateTime.Now < auction.SlutDatum)
-        {
-            <span>Auktionen är öppen</span>
-        }
-        else
-        {
-            <span>Auktionen är slut</span>
-        }
-    </p>
-    <p>Startdatum: @auction.StartDatum</p>
-    <p>Slutdatum: @auction.SlutDatum</p>
-    <p>Utropspris: @auction.Utropspris kr</p>
-    <hr />
-}
+﻿<link href="~/Styles/Auction/Auction-list.css" rel="stylesheet" />
+
+<div class="row">
+    @foreach (var auction in Model)
+    {
+        <div class="col-4 mt-2">
+            <div class="auction-box mx-1">
+                <h2 class="strong">@auction.Titel</h2>
+                <table class="ml-2">
+                    <tr>
+                        <th>Status:</th>
+                        <td>
+                            @if (DateTime.Now < auction.StartDatum)
+                            {
+                                <span>Auktionen har ännu inte startat</span>
+                            }
+                            else if (DateTime.Now < auction.SlutDatum)
+                            {
+                                <span>Auktionen är öppen</span>
+                            }
+                            else
+                            {
+                                <span>Auktionen är slut</span>
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Startdatum:</th>
+                        <td>@auction.StartDatum</td>
+                    </tr>
+                    <tr>
+                        <th>Slutdatum:</th>
+                        <td>@auction.SlutDatum</td>
+                    </tr>
+                    <tr>
+                        <th>Utropspris:</th>
+                        <td> @auction.Utropspris kr</td>
+                    </tr>
+                </table>
+                <a asp-controller="Auction" asp-action="GetAuction" asp-route-auctionId=@auction.AuktionId class="btn btn-dark mt-2 ml-2 text-amatic-sc strong">
+                    <i class="fas fa-info-circle"></i>
+                    &nbsp;Visa Auktion
+                </a>
+            </div>
+        </div>
+    }
+</div>
+

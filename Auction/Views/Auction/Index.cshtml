@@ -3,15 +3,34 @@
     ViewData["Title"] = "AZ-Auktioner";
 }
 
-<h2>Index</h2>
+<link href="~/Styles/Auction/Index.css" rel="stylesheet" />
 
-<input type="text" id="searchText" asp-all-route-data=""/>
-<button type="button" id="searchBtn">Sök</button>
+<div class="jumbotron jumbotron-fluid jumbotron-background text-white">
+    <div class="container pt-5 pb-2">
+        <h1 class="display-4">AZ-auktioner</h1>
+        <p class="lead pl-3 text-amatic-sc">Nya möjligheter för gamla ting</p>
+    </div>
+</div>
 
-<select id="orderOptions">
-    <option value=false>Slutdatum</option>
-    <option value=true>Utropspris</option>
-</select>
+
+<div class="row">
+    <div class="col-12">
+        <div class="input-group mb-3">
+            <select id="orderOptions" class="">
+                <option value=false>Slutdatum</option>
+                <option value=true>Utropspris</option>
+            </select>
+            <input type="text" id="searchText" asp-all-route-data="" class="form-control"/>
+            <div class="input-group-append">
+                <button type="button" id="searchBtn" class="btn btn-outline-dark">
+                    <i class="fas fa-search"> Sök Auktioner</i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr/>
 
 <div id="auctionList">
     @{Html.RenderPartial("_AuctionList", Model);}
@@ -34,7 +53,7 @@
                     $("#auctionList").html(result);
                 },
                 error: result => {
-                    console.log("fail", result);
+                    alert('Error could not search auctions')
                 }
             });
         };

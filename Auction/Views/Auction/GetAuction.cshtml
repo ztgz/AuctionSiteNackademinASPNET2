@@ -7,40 +7,50 @@
     ViewData["Title"] = "Auktion";
 }
 
-<p>@Model.Titel</p>
-
 <div class="row">
-    <div class="col-12">
-        <form method="post" asp-controller="Auction" asp-action="UpdateAuction" id="editForm" style="display: none">
-            <!-- Transform the auction read data to manage data -->
-            @{ Html.RenderPartial("_AuctionFormContent", _AuctionManage.Transform(Model));}
-            <button type="submit" class="btn btn-dark">Uppdatera auktion</button>
-        </form>
+    <div class="col-5 mt-3">
+        <h2 class="strong"> @Model.Titel</h2>
+        <hr/>
+        <div class="pl-3">
+            <p><i class="fas fa-info-circle"></i><strong> Info:</strong> @Model.Beskrivning</p>
+            <p><i class="fas fa-money-bill-alt"></i><strong> Utropspris:</strong> @Model.Utropspris kr</p>
+            <p><i class="fas fa-calendar"></i><strong> Startar:</strong> @Model.StartDatum</p>
+            <p><i class="fas fa-calendar"></i><strong> Slutar:</strong> @Model.SlutDatum</p>
+        </div>
+        @if (Model.IsOwner)
+        {
+            <a asp-controller="Auction" asp-action="UpdateAuction" asp-route-id=@Model.AuktionId class="btn btn-dark">Uppdatera</a>
+        }
+        @if (User.IsInRole(AppUser.ROLE_ADMIN))
+        {
+            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">Ta bort</button>
+        }
+    </div>
+    <div class="col-2"></div>
+    <div class="col-5 mt-3">
+        @if (DateTime.Now < Model.StartDatum)
+        {
+            <h2>Auktion har inte startat ännu</h2>
+        }
+        else if (DateTime.Now < Model.SlutDatum)
+        {
+            <div id="bidList"></div>
+            if (SignInManager.IsSignedIn(User))
+            {
+                <div id="errorBid" class="mt-2"></div>
+                <div id="createBid"></div>
+                <button type="button" class="btn btn-dark" id="createBidBtn">Ge ett bud</button>
+            }
+        }
+        else
+        {
+            <p>Info om vinnande bud</p>
+        }
+        <div>
+
+        </div>
     </div>
 </div>
-
-@if (User.IsInRole(AppUser.ROLE_ADMIN))
-{
-    <button type="button" class="btn btn-dark" data-toggle="modal" data-target="#deleteModal">Ta bort</button>
-}
-@if (Model.IsOwner)
-{
-    <a asp-controller="Auction" asp-action="UpdateAuction" asp-route-id=@Model.AuktionId class="btn btn-dark">Uppdatera</a>
-}
-@if (DateTime.Now < Model.SlutDatum)
-{
-    <div id="bidList"></div>
-    if (SignInManager.IsSignedIn(User))
-    {
-        <div id ="errorBid"></div>
-        <div id="createBid"></div>
-        <button type="button" class="btn btn-dark" id="createBidBtn">Ge ett bud</button>
-    }
-}
-else
-{
-    <p>Info om vinnande bud</p>
-}
 
 <!-- Confirm delete of modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="Delete Auction" aria-hidden="true">
@@ -58,7 +68,7 @@ else
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Avbryt</button>
                 <form method="post" asp-controller="Auction" asp-action="DeleteAuction" asp-route-auctionId="@Model.AuktionId">
-                    <button type="submit" class="btn btn-primary" id="deleteBtn">Ta bort auktion</button>
+                    <button type="submit" class="btn btn-danger" id="deleteBtn">Ta bort auktion</button>
                 </form>
             </div>
         </div>
@@ -101,18 +111,20 @@ else
             data: { __RequestVerificationToken: token, uim: bidObj },
             success: result => {
                 //Reload list of bids
+                const alertHtml = createAlert('Bud lyckades', true);
+                $('#errorBid').html(alertHtml);
                 getBids();
             },
             error: result => {
-                const alertHtml = createAlert(result.responseText);
+                const alertHtml = createAlert(result.responseText, false);
                 $('#errorBid').html(alertHtml);
             }
         });
     };
 
     /* Other functions */
-    const createAlert = text =>  `
-        <div class="alert alert-danger" role="alert">
+    const createAlert = (text, success) =>  `
+        <div class="alert alert-${success ? 'success' : 'danger'}" role="alert">
             ${text}
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>

@@ -29,7 +29,7 @@ namespace Services
         {
             try
             {
-                var bids = await _bidRepo.GetBids(auctionId);
+                var bids = (await _bidRepo.GetBids(auctionId)).OrderByDescending(b => b.Summa);
                 var result = _mapper.Map<IList<_BidRead>>(bids);
                 return result;
             }

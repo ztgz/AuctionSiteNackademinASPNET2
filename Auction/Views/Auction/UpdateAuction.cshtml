@@ -4,10 +4,14 @@
     ViewData["Title"] = "Uppdatera auktiuon";
 }
 
-<form method="post" asp-controller="Auction" asp-action="UpdateAuction">
-    <!-- Transform the auction read data to manage data -->
-    @{ Html.RenderPartial("_AuctionFormContent", Model);}
-    <button type="submit" class="btn btn-dark">Uppdatera auktion</button>
-    <a asp-controller="Auction" asp-action="GetAuction" asp-route-auctionId=@Model.AuktionId class="btn btn-dark">Tillbaka</a>
-</form>
+<div class="pt-3">
+    <h2 class="strong">Uppdatera Auktion</h2>
+    <hr/>
+    <form method="post" asp-controller="Auction" asp-action="UpdateAuction">
+        <!-- Transform the auction read data to manage data -->
+        @{ Html.RenderPartial("_AuctionFormContent", Model);}
+        <a asp-controller="Auction" asp-action="GetAuction" asp-route-auctionId=@Model.AuktionId class="btn btn-secondary">Tillbaka</a>
+        <button type="submit" class="btn btn-dark float-right">Uppdatera auktion</button>
+    </form>
+</div>
 

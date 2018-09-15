@@ -8,10 +8,13 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>@ViewBag.Title</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-</head>
 
-<body>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Amatic+SC|Open+Sans+Condensed:300" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    <link href="~/Styles/Base.css" rel="stylesheet" />
+    <link rel="shortcut icon" href="~/Images/favicon.ico">
+
     <!-- The scripts is on top of the body, for some reason the partial views wont load the libarys if the are in the bottom-->
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
@@ -20,28 +23,43 @@
     <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.17.0/jquery.validate.min.js"></script>
     <script src="https://ajax.aspnetcdn.com/ajax/jquery.validation.unobtrusive/3.2.6/jquery.validate.unobtrusive.min.js"></script>
     <script src="https://cdn.jsdelivr.net/jquery.ajax.unobtrusive/3.2.4/jquery.unobtrusive-ajax.min.js"></script>
+</head>
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top ">
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top navbar-font">
         <div class="container">
-            <a asp-controller="Auction" asp-action="Index" class="navbar-brand">AZ-Auktion</a>
+            <a class="navbar-brand logo" asp-controller="Auction" asp-action="Index">
+                <img src="~/Images/logo.png" class="logo" alt="logo"/>
+            </a>
+            @*<a asp-controller="Auction" asp-action="Index" class="navbar-brand">AZ-Auktion</a>*@
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbar-content">
                 <ul class="navbar-nav mr-auto">
-                    <li class="nav-item">
-                        <a asp-controller="Auction" asp-action="Index" class="nav-link">Home</a>
-                    </li>
                     @if (User.IsInRole(AppUser.ROLE_ADMIN))
                     {
-                        <li class="nav-item">
-                            <a asp-controller="Auction" asp-action="CreateAuction" class="nav-link">Auktion</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Auktioner
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a asp-controller="Auction" asp-action="Index" class="dropdown-item">Visa alla</a>
+                                <a asp-controller="Auction" asp-action="CreateAuction" class="dropdown-item">Skapa ny</a>
+                            </div>
                         </li>
                         <li class="nav-item">
                             <a asp-controller="Admin" asp-action="Index" class="nav-link">Admin</a>
                         </li>
                         <li>
                             <a asp-controller="Statistics" asp-action="Index" class="nav-link">Statistik</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a asp-controller="Auction" asp-action="Index" class="nav-link">Auktioner</a>
                         </li>
                     }
                 </ul>

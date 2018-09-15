@@ -6,10 +6,12 @@
 
 <div class="row pt-2">
     <div class="col-12">
-        <h1>Ny auktion</h1>
+        <h2 class="strong">Ny auktion</h2>
+        <hr/>
         <form asp-controller="Auction" asp-action="CreateAuction" method="post">
             @{ Html.RenderPartial("_AuctionFormContent", Model);}
-            <button type="submit" class="btn btn-dark ">Skapa auktion</button>
+            <a asp-controller="Auction" asp-action="Index" class="btn btn-secondary">Avbryt</a>
+            <button type="submit" class="btn btn-dark float-right">Skapa auktion</button>
         </form>
     </div>
 </div>
