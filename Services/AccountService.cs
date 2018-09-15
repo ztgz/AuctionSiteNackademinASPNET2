@@ -11,10 +11,12 @@ namespace Services
     public class AccountService : IAccountService
     {
         private readonly UserManager<AppUser> _userManager;
+        private readonly SignInManager<AppUser> _signInManager;
 
-        public AccountService (UserManager<AppUser> userManager)
+        public AccountService (UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
         {
             _userManager = userManager;
+            _signInManager = signInManager;
         }
 
         public async Task<_UsersRolesManage> GetUsersRoles()
@@ -44,11 +46,10 @@ namespace Services
                 var user = await _userManager.FindByEmailAsync(userEmail);
                 //Remove him from all roles
                 var roles = await _userManager.GetRolesAsync(user);
+
                 await _userManager.RemoveFromRolesAsync(user, roles);
                 //Add to the specified role
                 var result = await _userManager.AddToRoleAsync(user, role);
-                //TODO CHECK THERE NEEDS TO BE ATLEAST ONE ADMIN
-
 
                 return result.Succeeded;
             }

@@ -1,15 +1,12 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Models.IdentityModels;
 using Services.Interfaces;
 
 namespace Auction.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = AppUser.ROLE_ADMIN)]
     public class AdminController : Controller
     {
         private readonly IAccountService _accountService;
@@ -27,7 +24,12 @@ namespace Auction.Controllers
         [HttpPost]
         public async Task<JsonResult> ChangeRole(string userEmail, string role)
         {
-            var result = await _accountService.SetUserToRole(userEmail, role);
+            bool result = false;
+            //User cannot change it's role
+            if (User.Identity.Name != userEmail)
+            {
+                result = await _accountService.SetUserToRole(userEmail, role);
+            } 
             return new JsonResult(result);
         }
     }
