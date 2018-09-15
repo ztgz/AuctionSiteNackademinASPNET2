@@ -1,41 +1,53 @@
-﻿@using Models.IdentityModels
+﻿@using Microsoft.AspNet.Identity
+@using Models.IdentityModels
 @model _UsersRolesManage
 
 @{
     ViewData["Title"] = "Kontrollpanel";
 }
+<div class="row">
+    <div class="col-12 mt-2">
+    </div>
+</div>
+<div class="row">
+    @if (Model.AdminUsers != null && Model.RegularUsers != null)
+    {
+        <div class="col-6 input-group mt-2">
+            <h2 class="strong">Admin Användare</h2>
+            <select id="adminUsers" class="form-control mx-1">
+                @foreach (var user in Model.AdminUsers)
+                {
+                    if (user.Id != User.Identity.GetUserId())
+                    {
+                        <option value=@user.Email>@user.Email</option>
+                    }
+                }
+            </select>
+            <button class="btn btn-dark" id="toRegularBtn">Till vanlig</button>
+        </div>
+        <div class="col-6 input-group mt-2">
+            <h2 class="strong">Vanliga Användare</h2>
+            <select id="regularUsers" class="form-control mx-1">
+                @foreach (var user in Model.RegularUsers)
+                {
+                    <option value=@user.Email>@user.Email</option>
+                }
+            </select>
+            <button class="btn btn-dark" id="toAdminBtn">Till admin</button>
+        </div>
 
-<h2>Admin</h2>
-@if (Model.AdminUsers != null)
-{
-    <select id="adminUsers">
-        @foreach (var user in Model.AdminUsers)
-        {
-            <option value=@user.Email>@user.Email</option>
-        }
+    }
+    else
+    {
+        <h2>När sidan skulle laddas</h2>
+    }
+</div>
+<div class="row">
+    <div class="col-12 mt-1">
+        <div id="infoBox"></div>
+    </div>
+</div>
 
-    </select>
-    <button class="btn btn-dark" id="toRegularBtn">Till vanlig</button>
-}
-else
-{
-    <p>Fel när admin users skulle laddas</p>
-}
-@if (Model.RegularUsers != null)
-{
-    <select id="regularUsers">
-        @foreach (var user in Model.RegularUsers)
-        {
-            <option value=@user.Email>@user.Email</option>
-        }
-    </select>
-    <button class="btn btn-dark" id="toAdminBtn">Till admin</button>
-}
-else
-{
-    <p>Fel när regular users skulle laddas</p>
-}
-<div id="infoBox"></div>
 
 <script>
     const showAlert = (text, success) => {
@@ -48,7 +60,7 @@ else
         </div>`;
         $('#infoBox').html(alertHtml);
     };
-    
+
     $(document).ready(() => {
 
         $("#toAdminBtn").click(() => {

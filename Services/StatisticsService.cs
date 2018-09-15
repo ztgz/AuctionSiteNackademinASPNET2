@@ -98,7 +98,7 @@ namespace Services
 
         private string ConvertToKey(DateTime date)
         {
-            return $"{date.Month}/{date.Year}";
+            return $"{date.Year}-{date.Month.ToString("d2")}";
         }
     }
 }

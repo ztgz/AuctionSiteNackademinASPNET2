@@ -4,9 +4,9 @@
     ViewData["Title"] = "Registrera användare";
 }
 
-<div class="row">
-    <div class="col-12">
-        <h2>Register</h2>
+<div class="row justify-content-md-center">
+    <div class="col-xs-12 col-sm-10 col-md-8 mt-2">
+        <h2 class="strong">Skapa Konto</h2>
         <form method="post" asp-controller="Account" asp-action="Register">
             <div asp-validation-summary="All" class="text-danger"></div>
             <div class="form-group">
@@ -24,7 +24,7 @@
                 <input asp-for="ConfirmPassword" class="form-control"/>
                 <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
-            <button type="submit" class="btn btn-dark">Skapa konto</button>
+            <button type="submit" class="btn btn-dark float-right">Skapa konto</button>
         </form>
     </div>
 </div>

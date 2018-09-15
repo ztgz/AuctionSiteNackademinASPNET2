@@ -54,6 +54,15 @@ namespace Services
                 var auction = await _auctionRepo.GetAuction(auctionId);
                 result = _mapper.Map<_AuctionRead>(auction);
                 result.IsOwner = auction.SkapadAv == userId;
+
+                //set the maxbid if theres been bid
+                var bids = await _bidRepo.GetBids(auctionId);
+                if (bids.Count > 0)
+                {
+                    int maxBid = bids.Max(b => b.Summa);
+                    var bid = bids.First(b => b.Summa == maxBid);
+                    result.MaxBid = _mapper.Map<_BidRead>(bid);
+                }
             }
             catch
             {
