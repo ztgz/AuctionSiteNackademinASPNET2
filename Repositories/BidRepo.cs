@@ -64,5 +64,22 @@ namespace Repositories
                 return false;
             }
         }
+
+        public async Task<bool> DeleteBid(int bidId)
+        {
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    client.BaseAddress = _baseAddress;
+                    var result = await client.DeleteAsync($"/api/Bud/{Auction.GROUP_CODE}/{bidId}");
+                    return result.IsSuccessStatusCode;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }

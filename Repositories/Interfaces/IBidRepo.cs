@@ -8,5 +8,6 @@ namespace Repositories.Interfaces
     {
         Task<IList<Bid>> GetBids(int auctionId);
         Task<bool>       CreateBid(Bid dim);
+        Task<bool>       DeleteBid(int bidId);
     }
 }
