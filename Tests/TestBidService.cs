@@ -47,6 +47,11 @@ namespace Tests
             };
             Assert.True(_BidRead.AreEqual(bid, bids[0]));
 
+            //No bids
+            bids = await _bidService.GetBids(2);
+            Assert.Equal(0, bids.Count);
+
+
         }
 
         [Fact]

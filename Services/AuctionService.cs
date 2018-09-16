@@ -31,10 +31,17 @@ namespace Services
 
             try
             {
-                Auction dim  = _mapper.Map<Auction>(uim);
-                dim.SkapadAv = userId;
+                if (uim.StartDatum >= uim.SlutDatum || uim.Utropspris < 1)
+                {
+                    success = false;
+                }
+                else
+                {
+                    Auction dim  = _mapper.Map<Auction>(uim);
+                    dim.SkapadAv = userId;
+                    success  = await _auctionRepo.CreateAuction(dim);
+                }
 
-                success  = await _auctionRepo.CreateAuction(dim);
             }
             catch
             {

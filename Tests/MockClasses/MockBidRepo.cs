@@ -13,21 +13,24 @@ namespace Tests.MockClasses
         {
             IList<Bid> bids = new List<Bid>();
 
-            bids.Add(new Bid()
+            if (auctionId == 1)
             {
-                AuktionId = 1,
-                Budgivare = "Me",
-                Summa = 1,
-                BudID = 1,
-            });
+                bids.Add(new Bid()
+                {
+                    AuktionId = 1,
+                    Budgivare = "Me",
+                    Summa = 1,
+                    BudID = 1,
+                });
 
-            bids.Add(new Bid()
-            {
-                AuktionId = 1,
-                Budgivare = "You",
-                Summa = 2,
-                BudID = 2,
-            });
+                bids.Add(new Bid()
+                {
+                    AuktionId = 1,
+                    Budgivare = "You",
+                    Summa = 2,
+                    BudID = 2,
+                });
+            }
 
             return Task.FromResult(bids);
         }
